@@ -7,11 +7,11 @@ plugins {
 }
 
 android {
-    namespace = "com.github.goutarouh.baseandroidproject"
+    namespace = "com.github.goutarouh.waterworksbureauclone"
     compileSdk = libs.versions.compileSdkVersion.get().toInt()
 
     defaultConfig {
-        applicationId = "com.github.goutarouh.baseandroidproject"
+        applicationId = "com.github.goutarouh.waterworksbureauclone"
         minSdk = libs.versions.minSdkVersion.get().toInt()
         targetSdk = libs.versions.targetSdkVersion.get().toInt()
         versionCode = 1

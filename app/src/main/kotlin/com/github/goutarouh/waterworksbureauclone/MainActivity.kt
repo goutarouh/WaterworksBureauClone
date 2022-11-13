@@ -1,4 +1,4 @@
-package com.github.goutarouh.baseandroidproject
+package com.github.goutarouh.waterworksbureauclone
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
