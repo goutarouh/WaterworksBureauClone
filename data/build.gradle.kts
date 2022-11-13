@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.github.goutarouh.baseandroidproject.data"
+    namespace = "com.github.goutarouh.waterworksbureauclone.data"
     compileSdk = libs.versions.compileSdkVersion.get().toInt()
 
     defaultConfig {

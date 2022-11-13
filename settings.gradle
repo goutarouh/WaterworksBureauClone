@@ -12,6 +12,6 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
-rootProject.name = "BaseAndroidProject"
+rootProject.name = "WaterworksBureauClone"
 include ':app'
 include ':data'
