@@ -1,8 +1,7 @@
 package com.github.goutarouh.waterworksbureauclone.bottombar
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.GenericShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -21,7 +20,7 @@ fun Droplet(
 
     val dropletShape = GenericShape { size, _ ->
         val shapeRect = Rect(Offset(0f, 0f), size)
-        val controlPointY = shapeRect.top + 80
+        val controlPointY = shapeRect.top + (shapeRect.bottom * 0.3f)
         arcTo(
             rect = Rect(
                 offset = Offset(0f, 0f),
@@ -47,6 +46,7 @@ fun Droplet(
 
     Box(
         modifier = modifier
+            .fillMaxSize()
             .clip(dropletShape)
             .background(MaterialTheme.colors.background)
     )
