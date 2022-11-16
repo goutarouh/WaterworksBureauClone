@@ -43,16 +43,6 @@ fun WaterworksBureauBottomBar() {
     var preSelectedIndex by remember { mutableStateOf(0) }
     var selectedIndex by remember { mutableStateOf(0) }
 
-    val indicatorAngleAnimSpec = TweenSpec<Float>(durationMillis = 500)
-    val dropLetAngle = remember { Animatable(0f) }
-    LaunchedEffect(selectedIndex) {
-        when {
-            preSelectedIndex < selectedIndex -> dropLetAngle.animateTo(-20f, indicatorAngleAnimSpec)
-            preSelectedIndex > selectedIndex -> dropLetAngle.animateTo(20f, indicatorAngleAnimSpec)
-        }
-        dropLetAngle.animateTo(0f, indicatorAngleAnimSpec)
-    }
-
     val tabColors = remember(items.size) {
         List(items.size) { i ->
             Animatable(Color.White)
@@ -72,29 +62,12 @@ fun WaterworksBureauBottomBar() {
         }
     }
 
-    LaunchedEffect(selectedIndex) {
-        when {
-            preSelectedIndex < selectedIndex -> dropLetAngle.animateTo(-20f, indicatorAngleAnimSpec)
-            preSelectedIndex > selectedIndex -> dropLetAngle.animateTo(20f, indicatorAngleAnimSpec)
-        }
-        dropLetAngle.animateTo(0f, indicatorAngleAnimSpec)
-    }
-
-    val dropLetAlpha = remember { Animatable(1f) }
-    LaunchedEffect(selectedIndex) {
-        if (preSelectedIndex == selectedIndex) return@LaunchedEffect
-        val diffPos = abs(preSelectedIndex - selectedIndex)
-        if (diffPos <= 1) return@LaunchedEffect
-        val durationMills = diffPos * 150
-        dropLetAlpha.animateTo(0f, TweenSpec(durationMillis = durationMills, delay = 200))
-        dropLetAlpha.animateTo(1f, TweenSpec(durationMillis = 0, delay = 200))
-    }
-
-
     WaterWorksBureauBottomNavLayout(
         selectedIndex = selectedIndex,
         itemCount = items.size,
-        dropletIndicator = { Droplet(dropLetAngle.value, dropLetAlpha.value) }
+        dropletIndicator = {
+            AnimationDroplet(selectedIndex = selectedIndex, preSelectedIndex = preSelectedIndex)
+        }
     ) {
         items.forEachIndexed { index, item ->
             val selected = index == selectedIndex
