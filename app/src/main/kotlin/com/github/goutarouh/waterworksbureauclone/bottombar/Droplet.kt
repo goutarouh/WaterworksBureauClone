@@ -9,12 +9,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.github.goutarouh.waterworksbureauclone.ui.theme.WaterworksBureauCloneTheme
 
 @Composable
 fun Droplet(
+    angle: Float,
+    alpha: Float,
     modifier: Modifier = Modifier
 ) {
 
@@ -47,6 +50,7 @@ fun Droplet(
     Box(
         modifier = modifier
             .fillMaxSize()
+            .graphicsLayer(rotationZ = angle, alpha = alpha)
             .clip(dropletShape)
             .background(MaterialTheme.colors.background)
     )
@@ -62,6 +66,8 @@ fun Droplet(
 fun PreviewDroplet() {
     WaterworksBureauCloneTheme {
         Droplet(
+            angle = 0f,
+            alpha = 1f,
             modifier = Modifier.size(width = 100.dp, height = 100.dp)
         )
     }
