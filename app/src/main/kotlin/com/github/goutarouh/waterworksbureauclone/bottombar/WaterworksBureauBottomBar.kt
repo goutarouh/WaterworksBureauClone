@@ -1,12 +1,12 @@
 package com.github.goutarouh.waterworksbureauclone.bottombar
 
+import androidx.compose.animation.Animatable
 import androidx.compose.foundation.layout.height
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.unit.dp
 import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.TweenSpec
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
@@ -15,14 +15,15 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.*
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.sp
 import com.github.goutarouh.waterworksbureauclone.R
+import com.github.goutarouh.waterworksbureauclone.ui.theme.MainBlue
+import kotlin.math.abs
 
 enum class BottomNavItem(
     val stringRes: Int,
@@ -39,20 +40,42 @@ enum class BottomNavItem(
 @Composable
 fun WaterworksBureauBottomBar() {
     val items = BottomNavItem.values().sortedBy { it.order }
-    val selectedIndex = remember { mutableStateOf(0) }
+    var preSelectedIndex by remember { mutableStateOf(0) }
+    var selectedIndex by remember { mutableStateOf(0) }
+
+    val tabColors = remember(items.size) {
+        List(items.size) { i ->
+            Animatable(Color.White)
+        }
+    }
+    tabColors.forEachIndexed { index, animatable ->
+        val selected = index == selectedIndex
+        val target = if (selected) MainBlue else Color.White
+        LaunchedEffect(target) {
+            val diffPos = abs(preSelectedIndex - selectedIndex)
+            val delay = if (preSelectedIndex == selectedIndex) {
+                0
+            } else {
+                200 + if (selected) diffPos * 120 else 0
+            }
+            animatable.animateTo(target, TweenSpec(durationMillis = 200, delay = delay))
+        }
+    }
+
     WaterWorksBureauBottomNavLayout(
-        selectedIndex = selectedIndex.value,
+        selectedIndex = selectedIndex,
         itemCount = items.size,
-        dropletIndicator = { Droplet() }
+        dropletIndicator = {
+            AnimationDroplet(selectedIndex = selectedIndex, preSelectedIndex = preSelectedIndex)
+        }
     ) {
         items.forEachIndexed { index, item ->
-            val selected = index == selectedIndex.value
-            val tint = if (selected) MaterialTheme.colors.primary else Color.White
+            val selected = index == selectedIndex
             WaterWorksBureauBottomNavigationIem(
                 icon = {
                     Icon(
                         imageVector = item.imageVector,
-                        tint = tint,
+                        tint = tabColors[index].value,
                         contentDescription = null
                     )
                 },
@@ -60,12 +83,13 @@ fun WaterworksBureauBottomBar() {
                     Text(
                         text = stringResource(item.stringRes),
                         fontSize = 12.sp,
-                        color = tint
+                        color = tabColors[index].value
                     )
                 },
                 selected = selected,
                 onSelected = {
-                    selectedIndex.value = index
+                    preSelectedIndex = selectedIndex
+                    selectedIndex = index
                 }
             )
         }
@@ -80,14 +104,21 @@ fun WaterWorksBureauBottomNavLayout(
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit
 ) {
+
+    val indicatorMovingAnimSpec = TweenSpec<Float>(
+        durationMillis = 1000
+    )
+
     val indicatorIndex = remember { Animatable(0f) }
     val targetIndicatorIndex = selectedIndex.toFloat()
     LaunchedEffect(targetIndicatorIndex) {
-        indicatorIndex.animateTo(targetIndicatorIndex)
+        indicatorIndex.animateTo(targetIndicatorIndex, indicatorMovingAnimSpec)
     }
 
     Layout(
-        modifier = Modifier.height(BottomNavHeight).background(color = MaterialTheme.colors.primary),
+        modifier = Modifier
+            .height(BottomNavHeight)
+            .background(color = MaterialTheme.colors.primary),
         content = {
             content()
             Box(Modifier.layoutId("indicator"), content = dropletIndicator)
