@@ -21,6 +21,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.sp
+import com.github.goutarouh.waterworksbureauclone.MainNavDest
 import com.github.goutarouh.waterworksbureauclone.R
 import com.github.goutarouh.waterworksbureauclone.ui.theme.MainBlue
 import kotlin.math.abs
@@ -32,13 +33,26 @@ enum class BottomNavItem(
 ) {
     HOME(R.string.home, Icons.Filled.Home,0),
     NOTIFICATION(R.string.notification, Icons.Filled.Notifications, 1),
-    PAY(R.string.pay, Icons.Filled.Payment, 2),
-    HISTORY(R.string.history, Icons.Filled.History, 3),
-    MENU(R.string.menu, Icons.Filled.MoreHoriz, 4)
+    PAYING(R.string.pay, Icons.Filled.Payment, 2),
+    USAGE_HISTORY(R.string.history, Icons.Filled.History, 3),
+    MENU(R.string.menu, Icons.Filled.MoreHoriz, 4);
+
+    fun toNav(): MainNavDest {
+        return when(this) {
+            HOME -> MainNavDest.HOME
+            NOTIFICATION -> MainNavDest.NOTIFICATION
+            PAYING -> MainNavDest.PAYING
+            USAGE_HISTORY -> MainNavDest.USAGE_HISTORY
+            MENU -> MainNavDest.MENU
+        }
+    }
 }
 
 @Composable
-fun WaterworksBureauBottomBar() {
+fun WaterworksBureauBottomBar(
+    onItemClicked: (BottomNavItem) -> Unit,
+    modifier: Modifier = Modifier
+) {
     val items = BottomNavItem.values().sortedBy { it.order }
     var preSelectedIndex by remember { mutableStateOf(0) }
     var selectedIndex by remember { mutableStateOf(0) }
@@ -65,6 +79,7 @@ fun WaterworksBureauBottomBar() {
     WaterWorksBureauBottomNavLayout(
         selectedIndex = selectedIndex,
         itemCount = items.size,
+        modifier = modifier,
         dropletIndicator = {
             AnimationDroplet(selectedIndex = selectedIndex, preSelectedIndex = preSelectedIndex)
         }
@@ -90,6 +105,7 @@ fun WaterworksBureauBottomBar() {
                 onSelected = {
                     preSelectedIndex = selectedIndex
                     selectedIndex = index
+                    onItemClicked(item)
                 }
             )
         }
@@ -116,7 +132,7 @@ fun WaterWorksBureauBottomNavLayout(
     }
 
     Layout(
-        modifier = Modifier
+        modifier = modifier
             .height(BottomNavHeight)
             .background(color = MaterialTheme.colors.primary),
         content = {
